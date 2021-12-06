@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.designpatterns.model.GithubIssue
 import com.example.designpatterns.repository.GithubRepository
+import com.example.designpatterns.utils.toast
 import com.example.designpatterns.view.IssueListAdaptor
 import com.example.designpatterns.viewmodel.MainViewModel
 import com.example.designpatterns.viewmodel.ViewModelFactory
@@ -42,9 +43,24 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setData() {
-
         viewModel.getIssues()
 
+        showLoading()
+
+        viewModel.getData().observe(this , { list ->
+            recyclerView.adapter = IssueListAdaptor(list as ArrayList<GithubIssue>)
+        })
+
+        showError()
+    }
+
+    private fun showError() {
+        viewModel.errorMessage.observe(this , {
+            toast(this , it)
+        })
+    }
+
+    private fun showLoading() {
         viewModel.loading.observe(this , { value ->
             if (value) {
                 progressBar.visibility = View.VISIBLE
@@ -54,13 +70,7 @@ class MainActivity : AppCompatActivity() {
                 recyclerView.visibility = View.VISIBLE
             }
         })
-
-        viewModel.errorMessage.observe(this , {
-            Toast.makeText(this , it , Toast.LENGTH_SHORT).show()
-        })
-
-        viewModel.getData().observe(this , { list ->
-            recyclerView.adapter = IssueListAdaptor(list as ArrayList<GithubIssue>)
-        })
     }
+
+
 }

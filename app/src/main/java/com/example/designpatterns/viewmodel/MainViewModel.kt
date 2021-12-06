@@ -26,14 +26,15 @@ class MainViewModel(val repository: GithubRepository) : ViewModel() {
         job = viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
             val response = repository.getIssues()
 
-            Log.e("MainViewModel" , "getIssues:${response.body()}  /n ${response.errorBody()} ")
+           // Log.e("MainViewModel" , "getIssues:${response.body()}  /n ${response.errorBody()} ")
 
             withContext(Dispatchers.Main) {
                 if (response.isSuccessful) {
                     issuesLiveData.value = response.body()
                     loading.value = false
                 } else {
-                    onError("Error : ${response.message()} ")
+                    val msg = response.message() ?: "Data Not Available"
+                    onError("Error : $msg ")
                 }
             }
         }
