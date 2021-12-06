@@ -9,17 +9,16 @@ import com.example.designpatterns.model.GithubIssue
 import com.example.designpatterns.repository.GithubRepository
 import kotlinx.coroutines.*
 
-class MainViewModel(val repository: GithubRepository) : ViewModel() {
+class MainViewModel(private val repository: GithubRepository) : ViewModel() {
 
-    val issuesLiveData: MutableLiveData<List<GithubIssue>> = MutableLiveData()
+    private val issuesLiveData: MutableLiveData<List<GithubIssue>> = MutableLiveData()
     val errorMessage = MutableLiveData<String>()
     val loading = MutableLiveData<Boolean>()
     var job: Job? = null
 
-    val exceptionHandler = CoroutineExceptionHandler { _ , throwable ->
+    private val exceptionHandler = CoroutineExceptionHandler { _ , throwable ->
         onError("Exception handled: ${throwable.localizedMessage}")
     }
-
 
     fun getIssues() {
 
